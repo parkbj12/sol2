@@ -4,7 +4,7 @@ import pandas as pd
 
 
 # OpenAI API 키 설정 (본인의 OpenAI API 키를 사용하세요)
-openai.api_key = 'api_key'
+openai.api_key = st.secrets["API_KEY"]
 app = Flask(__name__)
 
 # CSV 파일 로드 (파일 경로를 본인의 CSV 파일 경로로 변경하세요)
