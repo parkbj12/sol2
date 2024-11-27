@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 # CSV 파일 로드 (파일 경로를 본인의 CSV 파일 경로로 변경하세요)
 try:
-    data = pd.read_csv('C:\chat-gpt-prg\ch06\서울시 생활체육포털 우리동네 프로그램.csv', encoding='cp949')
+    data = pd.read_csv('C:\chat-gpt-prg\ch06\soil1.xlsx', encoding='cp949')
 except FileNotFoundError:
     print("CSV file not found. Please check the file path.")
     data = pd.DataFrame()  
