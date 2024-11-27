@@ -4,6 +4,7 @@ import pandas as pd
 
 
 # OpenAI API 키 설정 (본인의 OpenAI API 키를 사용하세요)
+openai.api_key = ''
 app = Flask(__name__)
 
 # CSV 파일 로드 (파일 경로를 본인의 CSV 파일 경로로 변경하세요)
@@ -24,15 +25,15 @@ template = '''
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>서울시 피트니스 네트워크</title>
     <style>
+        /* 기존 스타일 설정 */
         * {
             margin: 0;
-            padding: 0;
+            padding: 0;                                                     
             box-sizing: border-box; 
         }
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            padding: 20px;
         }
         header {
             background-color: #333;
@@ -40,12 +41,60 @@ template = '''
             padding: 1rem;
             text-align: center;
         }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
+        nav ul {
+            list-style: none;
         }
+        nav ul li {
+            display: inline;
+            margin-right: 30px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        .banner {
+            text-align: center;
+            margin: 50px 0;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .card-container {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .card {
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            padding: 10px;
+        }
+        .card img {
+            max-width: 100%;
+            height: auto;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #333;
+            color: #fff;
+        }
+        /* 챗봇 스타일 */
         .chat-container {
-            margin: 20px 0;
+            margin: 20px;
         }
         .chat-box {
             width: 100%;
@@ -54,6 +103,7 @@ template = '''
             padding: 10px;
             overflow-y: scroll;
         }
+        
         .chat-input {
             margin-top: 10px;
             display: flex;
@@ -70,47 +120,53 @@ template = '''
             border: none;
             cursor: pointer;
         }
-        .api-key-container {
-            margin-bottom: 20px;
-        }
-        .api-key-input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .user-message {
-            float: right;
-            background-color: #f0f0f0;
-            padding: 8px;
-            border-radius: 10px;
-            margin: 5px 0;
-            max-width: 80%;
-            display: inline-block;
-            clear: both;
-        }
-        .bot-response {
-            float: left;
-            background-color: #d0f0c0;
-            padding: 8px;
-            border-radius: 10px;
-            margin: 5px 0;
-            max-width: 80%;
-            display: inline-block;
-            clear: both;
-        }
+
+        /* 사용자와 챗봇의 메시지 스타일 */
+        .chat-box {
+    width: 100%;
+    padding: 10px;
+    overflow-y: scroll;
+}
+
+.user-message {
+    float: right;
+    background-color: #f0f0f0;
+    padding: 8px;
+    border-radius: 10px;
+    margin: 5px 0;
+    max-width: 80%;
+    display: inline-block;
+    clear: both;
+}
+
+.bot-response {
+    float: left;
+    background-color: #d0f0c0;
+    padding: 8px;
+    border-radius: 10px;
+    margin: 5px 0;
+    max-width: 80%;
+    display: inline-block;
+    clear: both;
+}
+
+
     </style>
 </head>
 <body>
     <header>
         <h1>서울시 피트니스 네트워크</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Main page</a></li>
+
+            </ul>
+        </nav>
     </header>
-    <div class="container">
-        <!-- API 키 입력란 -->
-        <div class="api-key-container">
-            <h3>OpenAI API 키 입력</h3>
-            <input type="text" id="api-key" class="api-key-input" placeholder="API 키를 입력하세요">
+
+    <section id="home">
+        <div class="banner">
+            <h2>서울에서 본인에게 맞는 체육생활을 찾아보세요!</h2>
         </div>
     </section>
 
@@ -151,9 +207,9 @@ template = '''
 
 
     <section id="chatbot">
-    <!-- 챗봇 영역 -->
+    <div class="banner">
+        <h2>🏋️GYM 챗봇🏋️</h2>
         <div class="chat-container">
-            <h3>🏋️GYM 챗봇🏋️</h3>
             <div id="chat-box" class="chat-box">
                 <div class="bot-response"><strong>챗봇:</strong> 안녕하세요! 무엇을 도와드릴까요?</div>
             </div>
@@ -162,53 +218,49 @@ template = '''
                 <button onclick="sendMessage()">전송</button>
             </div>
         </div>
-    </div>
+</section>
 
-    <script>
-        let apiKey = "";
+<script>
+    function search() {
+        alert('검색 기능이 곧 추가됩니다!');
+    }
 
-        // API 키 설정
-        document.getElementById('api-key').addEventListener('input', (event) => {
-            apiKey = event.target.value;
+    function handleEnter(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    // 챗봇 메시지 전송 함수
+    function sendMessage() {
+        const userInput = document.getElementById('user-input').value;
+        const chatBox = document.getElementById('chat-box');
+        const userMessage = `<div class="user-message"><strong>사용자:</strong> ${userInput}</div>`;
+        chatBox.innerHTML += userMessage;
+        document.getElementById('user-input').value = ''; // 입력란 초기화
+
+        fetch('/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: userInput }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            const botMessage = `<div class="bot-response"><strong>챗봇:</strong> ${data.response}</div>`;
+            chatBox.innerHTML += botMessage;
+            chatBox.scrollTop = chatBox.scrollHeight; // 스크롤을 최신 메시지로 이동
         });
+    }
+</script>
 
-        function handleEnter(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-
-        // 메시지 전송 함수
-        function sendMessage() {
-            const userInput = document.getElementById('user-input').value;
-            const chatBox = document.getElementById('chat-box');
-            const userMessage = `<div class="user-message"><strong>사용자:</strong> ${userInput}</div>`;
-            chatBox.innerHTML += userMessage;
-            document.getElementById('user-input').value = ''; // 입력란 초기화
-
-            // API 호출
-            fetch('/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message: userInput, api_key: apiKey }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                const botMessage = `<div class="bot-response"><strong>챗봇:</strong> ${data.response}</div>`;
-                chatBox.innerHTML += botMessage;
-                chatBox.scrollTop = chatBox.scrollHeight; // 스크롤 최신 메시지로 이동
-            });
-        }
-    </script>
 </body>
 </html>
 '''
 
-# OpenAI API 호출 함수
-def generate_response(api_key, user_input):
-    openai.api_key = api_key
+# OpenAI API를 사용하여 사용자의 질문에 대한 응답 생성
+def generate_response(user_input):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -320,22 +372,15 @@ def get_district_data(district):
     </html>
     ''', content=district_content, district=district)
 
+# 사용자의 입력을 받아 ChatGPT 응답을 처리하는 라우트
 @app.route('/chat', methods=['POST'])
 def chat():
-    data = request.json
-    user_input = data.get('message')
-    api_key = data.get('api_key')
-
-    if not api_key or not user_input:
-        return jsonify({'response': 'API 키와 메시지를 입력해주세요.'})
-
-    try:
-        response = generate_response(api_key, user_input)
-        return jsonify({'response': response})
-    except Exception as e:
-        return jsonify({'response': f"오류가 발생했습니다: {str(e)}"})
+    user_input = request.json['message']
+    response = generate_response(user_input)
+    return jsonify({'response': response})
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
     
